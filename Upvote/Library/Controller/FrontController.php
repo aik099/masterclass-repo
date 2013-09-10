@@ -1,9 +1,9 @@
 <?php
 
-namespace Upvote\Library\Front;
+namespace Upvote\Library\Controller;
 
 
-class Controller {
+class FrontController {
 
     private $config;
 
@@ -14,7 +14,7 @@ class Controller {
     public function execute() {
         $call = $this->_determineControllers();
         $call_class = $call['call'];
-        $class = 'Upvote\\Application\\Controller\\' . ucfirst(array_shift($call_class));
+        $class = 'Upvote\\Application\\Controller\\' . ucfirst(array_shift($call_class)) . 'Controller';
         $method = array_shift($call_class);
         $o = new $class($this->config);
         return $o->$method();

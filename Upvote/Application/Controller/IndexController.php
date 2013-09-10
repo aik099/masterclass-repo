@@ -3,7 +3,7 @@
 namespace Upvote\Application\Controller;
 
 
-class Index {
+class IndexController {
 
     protected $db;
 

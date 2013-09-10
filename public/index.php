@@ -19,13 +19,12 @@ function upvote_autoload($className)
 	}
 	$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 
-	require $fileName;
+	require FULL_PATH . DIRECTORY_SEPARATOR . $fileName;
 }
 
-set_include_path(get_include_path() . ':' . FULL_PATH);
 spl_autoload_register('upvote_autoload');
 
 $config = require_once('../config.php');
 
-$framework = new \Upvote\Library\Front\Controller($config);
+$framework = new \Upvote\Library\Controller\FrontController($config);
 echo $framework->execute();

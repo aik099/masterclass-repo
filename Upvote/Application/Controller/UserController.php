@@ -3,7 +3,7 @@
 namespace Upvote\Application\Controller;
 
 
-class User {
+class UserController {
 
     public $db;
 

@@ -3,7 +3,7 @@
 namespace Upvote\Application\Controller;
 
 
-class Comment {
+class CommentController {
 
     public function __construct($config) {
         $dbconfig = $config['database'];
