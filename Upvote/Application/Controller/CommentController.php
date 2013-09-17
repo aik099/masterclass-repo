@@ -3,30 +3,25 @@
 namespace Upvote\Application\Controller;
 
 
-class CommentController {
+use Upvote\Application\Model\CommentModel;
+use Upvote\Library\Controller\Controller;
 
-    public function __construct($config) {
-        $dbconfig = $config['database'];
-        $dsn = 'mysql:host=' . $dbconfig['host'] . ';dbname=' . $dbconfig['name'];
-        $this->db = new \PDO($dsn, $dbconfig['user'], $dbconfig['pass']);
-        $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-    }
+class CommentController extends Controller
+{
 
-    public function create() {
-        if(!isset($_SESSION['AUTHENTICATED'])) {
-            die('not auth');
-            header("Location: /");
-            exit;
-        }
+	public function __construct($config)
+	{
+		parent::__construct($config);
 
-        $sql = 'INSERT INTO comment (created_by, created_on, story_id, comment) VALUES (?, NOW(), ?, ?)';
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(array(
-            $_SESSION['username'],
-            $_POST['story_id'],
-            filter_input(INPUT_POST, 'comment', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-        ));
-        header("Location: /story/?id=" . $_POST['story_id']);
-    }
+		$this->model = new CommentModel($config);
+		$this->authRequired['create'] = '/';
+	}
+
+	public function create()
+	{
+		$this->model->addCommentToStory($_POST['story_id'], $_POST['comment'], $_SESSION['username']);
+
+		header("Location: /story/?id=" . $_POST['story_id']);
+	}
 
 }
