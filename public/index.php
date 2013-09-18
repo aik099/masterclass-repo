@@ -1,14 +1,30 @@
 <?php
 
+define('FULL_PATH', dirname(__DIR__));
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 
+function upvote_autoload($className)
+{
+	$className = ltrim($className, '\\');
+	$fileName = '';
+
+	if ( $lastNsPos = strrpos($className, '\\') ) {
+		$namespace = substr($className, 0, $lastNsPos);
+		$className = substr($className, $lastNsPos + 1);
+		$fileName = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+	}
+	$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+
+	require FULL_PATH . DIRECTORY_SEPARATOR . $fileName;
+}
+
+spl_autoload_register('upvote_autoload');
+
 $config = require_once('../config.php');
-require_once '../MasterController.php';
 
-require_once '../Comment.php';
-require_once '../User.php';
-require_once '../Story.php';
-require_once '../Index.php';
-
-$framework = new MasterController($config);
+$framework = new \Upvote\Library\Controller\FrontController($config);
 echo $framework->execute();
