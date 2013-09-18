@@ -6,6 +6,7 @@ namespace Upvote\Application\Controller;
 use Upvote\Application\Model\CommentModel;
 use Upvote\Application\Model\StoryModel;
 use Upvote\Library\Controller\Controller;
+use Upvote\Library\View\View;
 
 class IndexController extends Controller
 {
@@ -24,22 +25,26 @@ class IndexController extends Controller
 		$stories = $this->model->getAllStories();
 		$comment_model = new CommentModel($this->config);
 
-		$content = '<ol>';
+		$items = '';
+		$view = new View();
 
 		foreach ( $stories as $story ) {
 			$count = $comment_model->getStoryCommentCount($story['id']);
 
-			$content .= '
-                <li>
-                <a class="headline" href="' . $story['url'] . '">' . $story['headline'] . '</a><br />
-                <span class="details">' . $story['created_by'] . ' | <a href="/story/?id=' . $story['id'] . '">' . $count . ' Comments</a> |
-                ' . date('n/j/Y g:i a', strtotime($story['created_on'])) . '</span>
-                </li>
-            ';
+			$items .= $view->parseTemplate('StoryElement', array(
+				'external_url' => $story['url'],
+				'headline' => $story['headline'],
+				'created_by' => $story['created_by'],
+				'created_on' => date('n/j/Y g:i a', strtotime($story['created_on'])),
+				'story_url' => '/story/?id=' . $story['id'],
+				'comment_count' => $count,
+			));
 		}
 
-		$content .= '</ol>';
+		$html = $view->parseTemplate('List', array(
+			'items' => $items,
+		));
 
-		require FULL_PATH . '/Upvote/Application/View/layout.phtml';
+		return $view->setContent($html);
 	}
 }

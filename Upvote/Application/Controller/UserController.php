@@ -5,6 +5,7 @@ namespace Upvote\Application\Controller;
 
 use Upvote\Application\Model\UserModel;
 use Upvote\Library\Controller\Controller;
+use Upvote\Library\View\View;
 
 class UserController extends Controller
 {
@@ -55,21 +56,15 @@ class UserController extends Controller
 				exit;
 			}
 		}
+
 		// Show the create form
+		$view = new View();
 
-		$content = '
-            <form method="post">
-                ' . $error . '<br />
-                <label>Username</label> <input type="text" name="username" value="" /><br />
-                <label>Email</label> <input type="text" name="email" value="" /><br />
-                <label>Password</label> <input type="password" name="password" value="" /><br />
-                <label>Password Again</label> <input type="password" name="password_check" value="" /><br />
-                <input type="submit" name="create" value="Create User" />
-            </form>
-        ';
+		$html = $view->parseTemplate('UserCreateForm', array(
+			'error' => $error,
+		));
 
-		require FULL_PATH . '/Upvote/Application/View/layout.phtml';
-
+		return $view->setContent($html);
 	}
 
 	public function account()
@@ -90,20 +85,15 @@ class UserController extends Controller
 
 		$details = $this->model->lookup($_SESSION['username']);
 
-		$content = '
-        ' . $error . '<br />
+		$view = new View();
 
-        <label>Username:</label> ' . $details['username'] . '<br />
-        <label>Email:</label>' . $details['email'] . ' <br />
+		$html = $view->parseTemplate('UserProfile', array(
+			'username' => $details['username'],
+			'email' => $details['email'],
+			'error' => $error,
+		));
 
-         <form method="post">
-                ' . $error . '<br />
-            <label>Password</label> <input type="password" name="password" value="" /><br />
-            <label>Password Again</label> <input type="password" name="password_check" value="" /><br />
-            <input type="submit" name="updatepw" value="Create User" />
-        </form>';
-
-		require FULL_PATH . '/Upvote/Application/View/layout.phtml';
+		return $view->setContent($html);
 	}
 
 	public function login()
@@ -124,17 +114,13 @@ class UserController extends Controller
 			}
 		}
 
-		$content = '
-            <form method="post">
-                ' . $error . '<br />
-                <label>Username</label> <input type="text" name="user" value="" />
-                <label>Password</label> <input type="password" name="pass" value="" />
-                <input type="submit" name="login" value="Log In" />
-            </form>
-        ';
+		$view = new View();
 
-		require FULL_PATH . '/Upvote/Application/View/layout.phtml';
+		$html = $view->parseTemplate('LoginForm', array(
+			'error' => $error,
+		));
 
+		return $view->setContent($html);
 	}
 
 	public function logout()

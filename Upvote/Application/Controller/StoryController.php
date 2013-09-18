@@ -6,6 +6,7 @@ namespace Upvote\Application\Controller;
 use Upvote\Application\Model\CommentModel;
 use Upvote\Application\Model\StoryModel;
 use Upvote\Library\Controller\Controller;
+use Upvote\Library\View\View;
 
 class StoryController extends Controller
 {
@@ -36,37 +37,37 @@ class StoryController extends Controller
 		$comments = $comment_model->getStoryComments($story['id']);
 		$comment_count = count($comments);
 
-		$content = '
-            <a class="headline" href="' . $story['url'] . '">' . $story['headline'] . '</a><br />
-            <span class="details">' . $story['created_by'] . ' | ' . $comment_count . ' Comments |
-            ' . date('n/j/Y g:i a', strtotime($story['created_on'])) . '</span>
-        ';
+		$view = new View();
+
+		$html = $view->parseTemplate('StoryHeading', array(
+			'external_url' => $story['url'],
+			'headline' => $story['headline'],
+			'created_by' => $story['created_by'],
+			'comment_count' => $comment_count,
+			'created_on' => date('n/j/Y g:i a', strtotime($story['created_on'])),
+		));
 
 		if ( isset($_SESSION['AUTHENTICATED']) ) {
-			$content .= '
-            <form method="post" action="/comment/create">
-            <input type="hidden" name="story_id" value="' . $_GET['id'] . '" />
-            <textarea cols="60" rows="6" name="comment"></textarea><br />
-            <input type="submit" name="submit" value="Submit Comment" />
-            </form>
-            ';
+			$html .= $view->parseTemplate('AddCommentForm', array(
+				'story_id' => $_GET['id'],
+			));
 		}
 
 		foreach ( $comments as $comment ) {
-			$content .= '
-                <div class="comment"><span class="comment_details">' . $comment['created_by'] . ' | ' .
-				date('n/j/Y g:i a', strtotime($story['created_on'])) . '</span>
-                ' . $comment['comment'] . '</div>
-            ';
+			$html .= $view->parseTemplate('CommentElement', array(
+				'created_by' => $comment['created_by'],
+				'created_on' => date('n/j/Y g:i a', strtotime($comment['created_on'])),
+				'comment_text' => $comment['comment'],
+			));
 		}
 
-		require FULL_PATH . '/Upvote/Application/View/layout.phtml';
-
+		return $view->setContent($html);
 	}
 
 	public function create()
 	{
 		$error = '';
+
 		if ( isset($_POST['create']) ) {
 			if ( !isset($_POST['headline']) || !isset($_POST['url']) ||
 				!filter_input(INPUT_POST, 'url', FILTER_VALIDATE_URL)
@@ -80,17 +81,13 @@ class StoryController extends Controller
 			}
 		}
 
-		$content = '
-            <form method="post">
-                ' . $error . '<br />
+		$view = new View();
 
-                <label>Headline:</label> <input type="text" name="headline" value="" /> <br />
-                <label>URL:</label> <input type="text" name="url" value="" /><br />
-                <input type="submit" name="create" value="Create" />
-            </form>
-        ';
+		$html = $view->parseTemplate('StoryCreateForm', array(
+			'error' => $error,
+		));
 
-		require FULL_PATH . '/Upvote/Application/View/layout.phtml';
+		return $view->setContent($html);
 	}
 
 }
