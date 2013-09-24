@@ -15,18 +15,18 @@ class CommentModel extends Model
 	 * @param string  $comment_text Comment text.
 	 * @param string  $username     Username.
 	 *
-	 * @return void
+	 * @return integer
 	 */
 	public function addCommentToStory($story_id, $comment_text, $username)
 	{
-		$sql = 'INSERT INTO comment (created_by, created_on, story_id, comment) VALUES (?, NOW(), ?, ?)';
-		$stmt = $this->db->prepare($sql);
+		$fields_hash = array(
+			'created_by' => $username,
+			'created_on' => date('Y-m-d H:i:s'),
+			'story_id' => $story_id,
+			'comment' => filter_var($comment_text, FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+		);
 
-		$stmt->execute(array(
-			$username,
-			$story_id,
-			filter_var($comment_text, FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-		));
+		return $this->db->insert($fields_hash, 'comment');
 	}
 
 	/**
@@ -41,11 +41,8 @@ class CommentModel extends Model
 		$sql = 'SELECT *
 				FROM comment
 				WHERE story_id = ?';
-		$stmt = $this->db->prepare($sql);
 
-		$stmt->execute(array($story_id));
-
-		return $stmt->rowCount() ? $stmt->fetchAll(\PDO::FETCH_ASSOC) : array();
+		return $this->db->fetchAll($sql, array($story_id));
 	}
 
 	/**
@@ -60,17 +57,10 @@ class CommentModel extends Model
 		$sql = 'SELECT COUNT(*) AS `count`
 				FROM comment
 				WHERE story_id = ?';
-		$stmt = $this->db->prepare($sql);
 
-		$stmt->execute(array($story_id));
+		$data = $this->db->fetchRow($sql, array($story_id));
 
-		if ( $stmt->rowCount() > 0 ) {
-			$data = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-			return $data['count'];
-		}
-
-		return 0;
+		return $data ? $data['count'] : 0;
 	}
 
 }

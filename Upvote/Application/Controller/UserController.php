@@ -5,6 +5,7 @@ namespace Upvote\Application\Controller;
 
 use Upvote\Application\Model\UserModel;
 use Upvote\Library\Controller\Controller;
+use Upvote\Library\Database\DatabaseFactory;
 use Upvote\Library\View\View;
 
 class UserController extends Controller
@@ -16,7 +17,7 @@ class UserController extends Controller
 	{
 		parent::__construct($config);
 
-		$this->model = new UserModel($config);
+		$this->model = new UserModel(new DatabaseFactory(), $config);
 		$this->authRequired['account'] = '/user/login';
 	}
 

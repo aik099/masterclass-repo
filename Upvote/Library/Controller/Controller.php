@@ -55,4 +55,16 @@ class Controller
 		return true;
 	}
 
+	/**
+	 * Formats the date.
+	 *
+	 * @param integer $date Timestamp.
+	 *
+	 * @return string
+	 */
+	protected function formatDate($date)
+	{
+		return date('n/j/Y g:i a', strtotime($date));
+	}
+
 }

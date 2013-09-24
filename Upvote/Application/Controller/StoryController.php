@@ -6,6 +6,7 @@ namespace Upvote\Application\Controller;
 use Upvote\Application\Model\CommentModel;
 use Upvote\Application\Model\StoryModel;
 use Upvote\Library\Controller\Controller;
+use Upvote\Library\Database\DatabaseFactory;
 use Upvote\Library\View\View;
 
 class StoryController extends Controller
@@ -15,7 +16,7 @@ class StoryController extends Controller
 	{
 		parent::__construct($config);
 
-		$this->model = new StoryModel($config);
+		$this->model = new StoryModel(new DatabaseFactory(), $config);
 		$this->authRequired['create'] = '/user/login';
 	}
 
@@ -33,7 +34,7 @@ class StoryController extends Controller
 			exit;
 		}
 
-		$comment_model = new CommentModel($this->config);
+		$comment_model = new CommentModel(new DatabaseFactory(), $this->config);
 		$comments = $comment_model->getStoryComments($story['id']);
 		$comment_count = count($comments);
 
@@ -44,7 +45,7 @@ class StoryController extends Controller
 			'headline' => $story['headline'],
 			'created_by' => $story['created_by'],
 			'comment_count' => $comment_count,
-			'created_on' => date('n/j/Y g:i a', strtotime($story['created_on'])),
+			'created_on' => $this->formatDate($story['created_on']),
 		));
 
 		if ( isset($_SESSION['AUTHENTICATED']) ) {
@@ -56,7 +57,7 @@ class StoryController extends Controller
 		foreach ( $comments as $comment ) {
 			$html .= $view->parseTemplate('CommentElement', array(
 				'created_by' => $comment['created_by'],
-				'created_on' => date('n/j/Y g:i a', strtotime($comment['created_on'])),
+				'created_on' => $this->formatDate($comment['created_on']),
 				'comment_text' => $comment['comment'],
 			));
 		}

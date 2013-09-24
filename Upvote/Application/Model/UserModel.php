@@ -19,18 +19,13 @@ class UserModel extends Model
 	 */
 	public function create($username, $email, $password)
 	{
-		$sql = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)';
-		$stmt = $this->db->prepare($sql);
-
-		$params = array(
-			$username,
-			$email,
-			$this->hashPassword($username, $password)
+		$fields_hash = array(
+			'username' => $username,
+			'email' => $email,
+			'password' => $this->hashPassword($username, $password)
 		);
 
-		$stmt->execute($params);
-
-		return $this->db->lastInsertId();
+		return $this->db->insert($fields_hash, 'user');
 	}
 
 	/**
@@ -43,17 +38,11 @@ class UserModel extends Model
 	 */
 	public function changePassword($username, $new_password)
 	{
-		$sql = 'UPDATE user
-				SET password = ?
-				WHERE username = ?';
-		$stmt = $this->db->prepare($sql);
-
-		$params = array(
-			$this->hashPassword($username, $new_password),
-			$username,
+		$fields_hash = array(
+			'password' => $this->hashPassword($username, $new_password),
 		);
 
-		$stmt->execute($params);
+		$this->db->update($fields_hash, 'user', 'username = ?', array($username));
 	}
 
 	/**
@@ -68,17 +57,16 @@ class UserModel extends Model
 	{
 		$sql = 'SELECT *
 				FROM user
-				WHERE username = ? AND password = ? LIMIT 1';
-		$stmt = $this->db->prepare($sql);
+				WHERE username = ? AND password = ?';
 
 		$params = array(
 			$username,
 			$this->hashPassword($username, $password)
 		);
 
-		$stmt->execute($params);
+		$data = $this->db->fetchRow($sql, $params);
 
-		return $stmt->rowCount() > 0;
+		return $data !== false;
 	}
 
 	/**
@@ -93,11 +81,8 @@ class UserModel extends Model
 		$sql = 'SELECT *
 				FROM user
 				WHERE username = ?';
-		$stmt = $this->db->prepare($sql);
 
-		$stmt->execute(array($username));
-
-		return $stmt->rowCount() ? $stmt->fetch(\PDO::FETCH_ASSOC) : array();
+		return $this->db->fetchRow($sql, array($username));
 	}
 
 	/**

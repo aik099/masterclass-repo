@@ -19,18 +19,14 @@ class StoryModel extends Model
 	 */
 	public function create($headline, $url, $username)
 	{
-		$sql = 'INSERT INTO story (headline, url, created_by, created_on) VALUES (?, ?, ?, NOW())';
-		$stmt = $this->db->prepare($sql);
-
-		$params = array(
-			$headline,
-			$url,
-			$username,
+		$fields_hash = array(
+			'headline' => $headline,
+			'url' => $url,
+			'created_by' => $username,
+			'created_on' => date('Y-m-d H:i:s'),
 		);
 
-		$stmt->execute($params);
-
-		return $this->db->lastInsertId();
+		return $this->db->insert($fields_hash, 'story');
 	}
 
 	/**
@@ -45,11 +41,8 @@ class StoryModel extends Model
 		$sql = 'SELECT *
 				FROM story
 				WHERE id = ?';
-		$stmt = $this->db->prepare($sql);
 
-		$stmt->execute(array($story_id));
-
-		return $stmt->rowCount() ? $stmt->fetch(\PDO::FETCH_ASSOC) : array();
+		return $this->db->fetchRow($sql, array($story_id));
 	}
 
 	/**
@@ -62,11 +55,8 @@ class StoryModel extends Model
 		$sql = 'SELECT *
 				FROM story
 				ORDER BY created_on DESC';
-		$stmt = $this->db->prepare($sql);
 
-		$stmt->execute();
-
-		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		return $this->db->fetchAll($sql);
 	}
 
 }

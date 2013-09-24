@@ -5,6 +5,7 @@ namespace Upvote\Application\Controller;
 
 use Upvote\Application\Model\CommentModel;
 use Upvote\Library\Controller\Controller;
+use Upvote\Library\Database\DatabaseFactory;
 
 class CommentController extends Controller
 {
@@ -13,7 +14,7 @@ class CommentController extends Controller
 	{
 		parent::__construct($config);
 
-		$this->model = new CommentModel($config);
+		$this->model = new CommentModel(new DatabaseFactory(), $config);
 		$this->authRequired['create'] = '/';
 	}
 
