@@ -6,17 +6,21 @@ namespace Upvote\Application\Controller;
 use Upvote\Application\Model\CommentModel;
 use Upvote\Application\Model\StoryModel;
 use Upvote\Library\Controller\Controller;
-use Upvote\Library\Database\DatabaseFactory;
 use Upvote\Library\View\View;
 
 class StoryController extends Controller
 {
 
-	public function __construct($config)
+	/**
+	 * Sets up the controller internals.
+	 *
+	 * @return void
+	 */
+	protected function setup()
 	{
-		parent::__construct($config);
+		parent::setup();
 
-		$this->model = new StoryModel(new DatabaseFactory(), $config);
+		$this->model = new StoryModel($this->db);
 		$this->authRequired['create'] = '/user/login';
 	}
 
@@ -34,7 +38,7 @@ class StoryController extends Controller
 			exit;
 		}
 
-		$comment_model = new CommentModel(new DatabaseFactory(), $this->config);
+		$comment_model = new CommentModel($this->db);
 		$comments = $comment_model->getStoryComments($story['id']);
 		$comment_count = count($comments);
 

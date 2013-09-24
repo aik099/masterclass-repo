@@ -6,8 +6,8 @@
 
 namespace Upvote\Library\Model;
 
+
 use Upvote\Library\Database\IDatabaseConnection;
-use Upvote\Library\Database\IDatabaseFactory;
 
 class Model
 {
@@ -22,12 +22,11 @@ class Model
 	/**
 	 * Creates model instance.
 	 *
-	 * @param IDatabaseFactory $database_factory Database factory.
-	 * @param array            $config           Configuration.
+	 * @param IDatabaseConnection $database Database connection.
 	 */
-	public function __construct(IDatabaseFactory $database_factory, array $config = array())
+	public function __construct(IDatabaseConnection $database)
 	{
-		$this->db = $database_factory->getConnection($config['database']);
+		$this->db = $database;
 	}
 
 }

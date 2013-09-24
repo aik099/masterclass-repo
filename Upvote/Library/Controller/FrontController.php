@@ -3,19 +3,42 @@
 namespace Upvote\Library\Controller;
 
 
+use Upvote\Library\Database\IDatabaseConnection;
+use Upvote\Library\Database\IDatabaseFactory;
+
 class FrontController
 {
 
 	private $config;
 
-	public function __construct($config)
+	/**
+	 * Database connection.
+	 *
+	 * @var IDatabaseConnection
+	 */
+	protected $db;
+
+	public function __construct(IDatabaseFactory $database_factory, array $config)
 	{
 		$this->_setupConfig($config);
+		$this->_setupDatabase($database_factory);
 	}
 
 	private function _setupConfig($config)
 	{
 		$this->config = $config;
+	}
+
+	/**
+	 * Sets up the database.
+	 *
+	 * @param IDatabaseFactory $database_factory
+	 *
+	 * @return void
+	 */
+	private function _setupDatabase(IDatabaseFactory $database_factory)
+	{
+		$this->db = $database_factory->getConnection($this->config['database']);
 	}
 
 	public function execute()
@@ -26,7 +49,7 @@ class FrontController
 		$method = array_shift($call_class);
 
 		/** @var Controller $controller */
-		$controller = new $class($this->config);
+		$controller = new $class($this->db, $this->config);
 
 		if ( !$controller->checkActionPermissions($method) ) {
 			die('not auth');

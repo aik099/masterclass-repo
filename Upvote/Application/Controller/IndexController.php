@@ -6,25 +6,27 @@ namespace Upvote\Application\Controller;
 use Upvote\Application\Model\CommentModel;
 use Upvote\Application\Model\StoryModel;
 use Upvote\Library\Controller\Controller;
-use Upvote\Library\Database\DatabaseFactory;
 use Upvote\Library\View\View;
 
 class IndexController extends Controller
 {
 
-	protected $db;
-
-	public function __construct($config)
+	/**
+	 * Sets up the controller internals.
+	 *
+	 * @return void
+	 */
+	protected function setup()
 	{
-		parent::__construct($config);
+		parent::setup();
 
-		$this->model = new StoryModel(new DatabaseFactory(), $config);
+		$this->model = new StoryModel($this->db);
 	}
 
 	public function index()
 	{
 		$stories = $this->model->getAllStories();
-		$comment_model = new CommentModel(new DatabaseFactory(), $this->config);
+		$comment_model = new CommentModel($this->db);
 
 		$items = '';
 		$view = new View();

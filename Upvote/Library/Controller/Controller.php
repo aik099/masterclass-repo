@@ -7,6 +7,7 @@
 namespace Upvote\Library\Controller;
 
 
+use Upvote\Library\Database\IDatabaseConnection;
 use Upvote\Library\Model\Model;
 
 class Controller
@@ -27,15 +28,35 @@ class Controller
 	protected $model;
 
 	/**
+	 * Database connection.
+	 *
+	 * @var IDatabaseConnection
+	 */
+	protected $db;
+
+	/**
 	 * Defines controller actions, that require user to be authenticated.
 	 *
 	 * @var array
 	 */
 	protected $authRequired = array();
 
-	public function __construct($config)
+	public function __construct(IDatabaseConnection $database, array $config)
 	{
 		$this->config = $config;
+		$this->db = $database;
+
+		$this->setup();
+	}
+
+	/**
+	 * Sets up the controller internals.
+	 *
+	 * @return void
+	 */
+	protected function setup()
+	{
+
 	}
 
 	/**

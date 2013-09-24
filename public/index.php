@@ -26,5 +26,6 @@ spl_autoload_register('upvote_autoload');
 
 $config = require_once('../config.php');
 
-$framework = new \Upvote\Library\Controller\FrontController($config);
+$database_factory = new \Upvote\Library\Database\DatabaseFactory();
+$framework = new \Upvote\Library\Controller\FrontController($database_factory, $config);
 echo $framework->execute();

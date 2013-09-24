@@ -5,16 +5,20 @@ namespace Upvote\Application\Controller;
 
 use Upvote\Application\Model\CommentModel;
 use Upvote\Library\Controller\Controller;
-use Upvote\Library\Database\DatabaseFactory;
 
 class CommentController extends Controller
 {
 
-	public function __construct($config)
+	/**
+	 * Sets up the controller internals.
+	 *
+	 * @return void
+	 */
+	protected function setup()
 	{
-		parent::__construct($config);
+		parent::setup();
 
-		$this->model = new CommentModel(new DatabaseFactory(), $config);
+		$this->model = new CommentModel($this->db);
 		$this->authRequired['create'] = '/';
 	}
 
