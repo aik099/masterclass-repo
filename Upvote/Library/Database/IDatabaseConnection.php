@@ -7,6 +7,9 @@
 namespace Upvote\Library\Database;
 
 
+/**
+ * @method \Mockery\Expectation shouldReceive
+ */
 interface IDatabaseConnection
 {
 
