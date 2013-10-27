@@ -9,7 +9,10 @@ namespace Upvote\Library\Model;
 
 use Upvote\Library\Database\IDatabaseConnection;
 
-class Model
+/**
+ * @method \Mockery\Expectation shouldReceive
+ */
+abstract class Model
 {
 
 	/**

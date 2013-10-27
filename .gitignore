@@ -1,2 +1,5 @@
 public/.htaccess
 config.php
+composer.lock
+vendor
+build

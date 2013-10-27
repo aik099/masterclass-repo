@@ -2,12 +2,14 @@
 
 define('FULL_PATH', dirname(__DIR__));
 
+require_once FULL_PATH . '/vendor/autoload.php';
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 session_start();
 
-function upvote_autoload($className)
+/*function upvote_autoload($className)
 {
 	$className = ltrim($className, '\\');
 	$fileName = '';
@@ -22,7 +24,7 @@ function upvote_autoload($className)
 	require FULL_PATH . DIRECTORY_SEPARATOR . $fileName;
 }
 
-spl_autoload_register('upvote_autoload');
+spl_autoload_register('upvote_autoload');*/
 
 $config = require_once('../config.php');
 
