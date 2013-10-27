@@ -29,7 +29,7 @@
 
 	<filter>
 		<whitelist>
-			<directory>library/aik099</directory>
+			<directory>Upvote</directory>
 		</whitelist>
 	</filter>
 </phpunit>
